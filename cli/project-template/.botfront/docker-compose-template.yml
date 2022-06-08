@@ -5,29 +5,29 @@
 
 version: "3.0"
 services:
-#  botfront:
-#    image: botfront/botfront
-#    container_name: botfront-app
-#    restart: always
-#    networks: ['botfront-network']
-#    volumes:
-#      - ./models/:/app/models
-#    ports:
-#    - "8888:3000"
-#    depends_on:
-#    - mongo
-#    env_file:
-#    - .env
-#    environment:
-#      PORT: 3000
+  communico:
+    image: communico/communico:swcc
+    container_name: communico-app
+    restart: always
+    networks: ['communico-network']
+    volumes:
+      - ./models/:/app/models
+    ports:
+    - "8888:3000"
+    depends_on:
+    - mongo
+    env_file:
+    - .env
+    environment:
+      PORT: 3000
 
   rasa:
     build:
       context: ./rasa
       args:
         RASA_IMAGE: ${IMAGES_CURRENT_RASA}
-    container_name: botfront-rasa
-    networks: ["botfront-network"]
+    container_name: communico-rasa
+    networks: ["communico-network"]
     restart: always
     ports:
       - 5005:5005
@@ -41,8 +41,8 @@ services:
       context: ./actions
       args:
         RASA_SDK_IMAGE: ${IMAGES_CURRENT_ACTIONS}
-    container_name: botfront-actions
-    networks: ["botfront-network"]
+    container_name: communico-actions
+    networks: ["communico-network"]
     restart: always
     ports:
       - "5055:5055"
@@ -58,19 +58,19 @@ services:
 
   duckling:
     image: botfront/duckling
-    container_name: botfront-duckling
-    networks: ["botfront-network"]
+    container_name: communico-duckling
+    networks: ["communico-network"]
     restart: always
     ports:
       - "8000:8000"
 
   mongo:
     image: mongo
-    container_name: botfront-mongo
+    container_name: communico-mongo
     restart: always
-    networks: ["botfront-network"]
+    networks: ["communico-network"]
     volumes:
-    - ./botfront-db:/data/db
+    - ./communico-db:/data/db
     ports:
     - "27017:27017"
     env_file:
@@ -78,6 +78,6 @@ services:
 
 
 networks:
-  botfront-network: {}
+  communico-network: {}
 volumes:
-  botfront-db:
+  communico-db:
