@@ -62,12 +62,12 @@ class ProjectSidebar extends React.Component {
                             <Menu.Item name='Settings' icon='setting' data-cy='settings-sidebar-link'/>
                         </Link>
                     )}
-                    <a href={"https://10.6.3.26:443/managements/list?token=" + getNewJwtToken(Meteor.userId(), Meteor.user().emails[0].address)
-                        // + "&token=" + Accounts._storedLoginToken()}
-                    }
-                       target='_blank' rel='noopener noreferrer'>
-                        <Menu.Item name='Facial Recognition' icon='face'/>
-                    </a>
+                    {/*<a href={"https://10.6.3.26:443/managements/list?token=" + getNewJwtToken(Meteor.userId(), Meteor.user().emails[0].address)*/}
+                    {/*    // + "&token=" + Accounts._storedLoginToken()}*/}
+                    {/*}*/}
+                    {/*   target='_blank' rel='noopener noreferrer'>*/}
+                    {/*    <Menu.Item name='Facial Recognition' icon='face'/>*/}
+                    {/*</a>*/}
                     {/*<a href={settingsReady ? settings.settings.public.docUrl : ''} target='_blank' rel='noopener noreferrer'>*/}
                     {/*    <Menu.Item name='documentation' icon='question' />*/}
                     {/*</a>*/}
