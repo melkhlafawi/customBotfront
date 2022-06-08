@@ -98,10 +98,10 @@ const ChatDemo = (props) => {
             >
                 {logos.logoUrl ? (
                     <Image src={logos.logoUrl} centered className='custom-logo' />
-                ) : <>Botfront.</>}
+                ) : <>Communico.</>}
                 {logos.smallLogoUrl ? (
                     <Image src={logos.smallLogoUrl} centered className='small-custom-logo' />
-                ) : <>B.</>}
+                ) : <>C.</>}
             </ResponsiveAlternants>
             <ResponsiveAlternants cutoff={1000} as='span' className='large grey'>
                 <>
