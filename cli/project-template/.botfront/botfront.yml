@@ -1,6 +1,6 @@
 images:
   default:
-    botfront: communico/communico:swcc
+    communico: communico/communico:swcc
     rasa: botfront/rasa-for-botfront:v2.3.3-bf.3
     duckling: botfront/duckling:latest
     mongo: mongo:latest
@@ -11,6 +11,6 @@ images:
 # Note that they will be upper cased in the generated .env file
 env:
   bf_project_id: bf
-  bf_url: http://botfront:3000/graphql
+  bf_url: http://communico:3000/graphql
   root_url: http://localhost:8888 # used by meteor
   augmentation_factor: 50 # used by rasa
