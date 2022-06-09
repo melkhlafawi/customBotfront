@@ -6,7 +6,7 @@
 version: "3.0"
 services:
   communico:
-    image: communico/communico:swcc
+    image: communico/communico:generic
     container_name: communico-app
     restart: always
     networks: ['communico-network']
