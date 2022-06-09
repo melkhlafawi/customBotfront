@@ -1,4 +1,4 @@
 /**/__pycache__/
 /**/*.pyc
-/botfront-db
+/communico-db
 .pytest_cache

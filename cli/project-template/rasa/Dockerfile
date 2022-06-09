@@ -3,7 +3,7 @@
 ######################################################################
 
 # RASA_IMAGE is passed from docker-compose.yml which is generated
-# from ./botfront/docker-compose-template.yml and ./botfront/botfront.yml
+# from ./communico/docker-compose-template.yml and ./communico/communico.yml
 
 ARG RASA_IMAGE
 FROM ${RASA_IMAGE}

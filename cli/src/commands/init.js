@@ -31,8 +31,8 @@ export async function initCommand(
     try {
         await verifySystem();
         let images = {};
-        if (imgBotfront) images = {...images, botfront: imgBotfront};
-        if (imgBotfrontApi) images = {...images, 'botfront-api': imgBotfrontApi};
+        if (imgBotfront) images = {...images, communico: imgBotfront};
+        if (imgBotfrontApi) images = {...images, 'communico-api': imgBotfrontApi};
         if (imgRasa) images = {...images, rasa: imgRasa};
 
         const currentDirEmpty = fs.readdirSync(process.cwd()).length === 0;
@@ -70,8 +70,8 @@ export async function copyTemplateFilesToProjectDir(targetAbsolutePath, images, 
         const templateDir = path.resolve(__dirname, '..', '..', `project-template${cloud ? '-actions' : ''}`);
         await access(templateDir, fs.constants.R_OK);
         if (update){
-            await fs.copy(path.join(templateDir, '.botfront', 'botfront.yml'), path.join(targetAbsolutePath, '.botfront', 'botfront.yml'));
-            await fs.copy(path.join(templateDir, '.botfront', 'docker-compose-template.yml'), path.join(targetAbsolutePath, '.botfront', 'docker-compose-template.yml'));
+            await fs.copy(path.join(templateDir, '.communico', 'communico.yml'), path.join(targetAbsolutePath, '.communico', 'communico.yml'));
+            await fs.copy(path.join(templateDir, '.communico', 'docker-compose-template.yml'), path.join(targetAbsolutePath, '.communico', 'docker-compose-template.yml'));
         } else {
             await copy(templateDir, targetAbsolutePath, { clobber: false });
         }
@@ -111,7 +111,7 @@ export async function createProject(targetDirectory, images, ci = false, enableM
     let projectCreatedInAnotherDir = false;
     if (targetDirectory) {
         projectAbsPath = path.join(projectAbsPath, targetDirectory);
-        const message = `${chalk.red('ERROR:')} the directory ${chalk.blueBright.bold(targetDirectory)} already exists. Run ${chalk.cyan.bold('botfront init')} again and choose another directory.`
+        const message = `${chalk.red('ERROR:')} the directory ${chalk.blueBright.bold(targetDirectory)} already exists. Run ${chalk.cyan.bold('communico init')} again and choose another directory.`
         if (fs.existsSync(projectAbsPath)) return console.log(boxen(message))
         fs.mkdirSync(projectAbsPath);
         shell.cd(projectAbsPath);
@@ -120,7 +120,7 @@ export async function createProject(targetDirectory, images, ci = false, enableM
 
     try {
         await copyTemplateFilesToProjectDir(projectAbsPath, images, false, enableMongoAuth, cloud);
-        let command = 'botfront up';
+        let command = 'communico up';
         if (projectCreatedInAnotherDir) {
             command = `cd ${targetDirectory} && ${command}`;
         }

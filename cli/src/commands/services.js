@@ -41,10 +41,10 @@ import {
 } from '../utils';
 
 async function postUpLaunch(spinner) {
-    const serviceUrl = getServiceUrl('botfront');
+    const serviceUrl = getServiceUrl('communico');
     setSpinnerText(
         spinner,
-        `Opening Botfront (${chalk.green.bold(serviceUrl)}) in your browser...`,
+        `Opening Communico (${chalk.green.bold(serviceUrl)}) in your browser...`,
     );
     await wait(2000);
     await open(serviceUrl);
@@ -69,7 +69,7 @@ export async function doMinorUpdate() {
     if (isMajorUpdateWithVersion(projectVersion, botfrontVersion)) {
         return console.log(
             boxen(
-                `Project was made with Botfront ${chalk.blueBright(
+                `Project was made with Communico ${chalk.blueBright(
                     projectVersion,
                 )} and the currently installed version is ${chalk.green(
                     botfrontVersion,
@@ -101,7 +101,7 @@ export async function dockerComposeUp(
         const noProjectMessage = `${chalk.yellow.bold(
             'No project found.',
         )} ${chalk.cyan.bold(
-            'botfront up',
+            'communico up',
         )} must be executed from your project's directory`;
         return console.log(boxen(noProjectMessage));
     }
@@ -110,7 +110,7 @@ export async function dockerComposeUp(
 
     updateEnvFile(process.cwd());
     await generateDockerCompose(exclude);
-    startSpinner(spinner, 'Starting Botfront...');
+    startSpinner(spinner, 'Starting Communico...');
     const missingImgs = await getMissingImgs();
     await pullDockerImages(missingImgs, spinner, 'Downloading Docker images...');
     await stopRunningProjects(
@@ -122,30 +122,30 @@ export async function dockerComposeUp(
     let command = 'docker-compose up -d';
     const services = getServiceNames(workingDir);
     try {
-        startSpinner(spinner, 'Starting Botfront...');
+        startSpinner(spinner, 'Starting Communico...');
         await shellAsync(command, { silent: !verbose });
         if (ci) process.exit(0); // exit now if ci
-        if (services.includes('botfront') && !exclude.includes('botfront'))
-            await waitForService('botfront');
+        if (services.includes('communico') && !exclude.includes('communico'))
+            await waitForService('communico');
         stopSpinner();
-        console.log(`\n\n        🎉 🎈  Botfront is ${chalk.green.bold('UP')}! 🎉 🎈\n`);
+        console.log(`\n\n        🎉 🎈  Communico is ${chalk.green.bold('UP')}! 🎉 🎈\n`);
         const message =
             'Useful commands:\n\n' +
-            (`\u2022 Run ${chalk.cyan.bold('botfront logs')} to follow logs \n` +
+            (`\u2022 Run ${chalk.cyan.bold('communico logs')} to follow logs \n` +
                 `\u2022 Run ${chalk.cyan.bold(
-                    'botfront watch',
+                    'communico watch',
                 )} to watch ${chalk.yellow.bold('actions')} and ${chalk.yellow.bold(
                     'rasa',
                 )} folders (see ` +
                 `${chalk.cyan.bold('https://botfront.io/docs/rasa/custom-actions')})\n` +
-                `\u2022 Run ${chalk.cyan.bold('botfront down')} to stop Botfront\n` +
+                `\u2022 Run ${chalk.cyan.bold('communico down')} to stop Communico\n` +
                 `\u2022 Run ${chalk.cyan.bold(
-                    'botfront --help',
+                    'communico --help',
                 )} to get help with the CLI\n`);
         console.log(boxen(message) + '\n');
 
-        if (services.includes('botfront') && !exclude.includes('botfront'))
-            await postUpLaunch(spinner); // browser stuff is botfront is not excluded
+        if (services.includes('communico') && !exclude.includes('communico'))
+            await postUpLaunch(spinner); // browser stuff is communico is not excluded
         stopSpinner();
         process.exit(0);
     } catch (e) {
@@ -155,13 +155,13 @@ export async function dockerComposeUp(
                 `${chalk.red.bold(
                     'ERROR:',
                 )} Something went wrong. Check the logs above for more information ☝️, or try inspecting the logs with ${chalk.red.cyan(
-                    'botfront logs',
+                    'communico logs',
                 )}.`,
             );
             console.log(e);
         } else {
             stopSpinner(spinner);
-            failSpinner(spinner, 'Couldn\'t start Botfront. Retrying in verbose mode...', {
+            failSpinner(spinner, 'Couldn\'t start Communico. Retrying in verbose mode...', {
                 exit: false,
             });
             return dockerComposeUp(
@@ -178,13 +178,13 @@ export async function dockerComposeDown({ verbose }, workingDir) {
     if (workingDir) shell.cd(workingDir);
     if (!isProjectDir()) {
         const noProject = chalk.yellow.bold('No project found in this directory.');
-        const killall = chalk.cyan.bold('botfront killall');
+        const killall = chalk.cyan.bold('communico killall');
         const noProjectMessage =
             `${noProject}\n\nIf you don't know where your project is running from,\n` +
-            `${killall} will find and shut down any Botfront\nproject on your machine.`;
+            `${killall} will find and shut down any Communico\nproject on your machine.`;
         return console.log(boxen(noProjectMessage));
     }
-    const spinner = ora('Stopping Botfront...');
+    const spinner = ora('Stopping Communico...');
     spinner.start();
     let command = 'docker-compose down';
     await shellAsync(command, { silent: !verbose });
@@ -256,7 +256,7 @@ export async function dockerComposeCommand(
         const noProjectMessage =
             `${chalk.yellow.bold('No project found in this directory.')}\n` +
             (`${chalk.cyan.bold(
-                `botfront ${name}`,
+                `communico ${name}`,
             )} must be executed in your project's directory.\n` +
                 `${chalk.green.bold(
                     'TIP: ',
@@ -319,7 +319,7 @@ export async function getRunningDockerResources() {
     const docker = new Docker({});
     const command = 'container ps --format={{.Names}}';
     const containersCommand = await docker.command(command);
-    const containers = containersCommand.raw.match(/(botfront-\w+)/g);
+    const containers = containersCommand.raw.match(/(communico-\w+)/g);
     const networkCommand = await docker.command('network ls --format={{.Name}}');
 
     const networks = networkCommand.raw.match(/([^\s]+_botfront-network)/g);
@@ -355,7 +355,7 @@ export async function stopRunningProjects(
         stopSpinner();
         const failMessage =
             `Could not stop running project. Run ${chalk.cyan.bold(
-                'docker ps | grep -w botfront-',
+                'docker ps | grep -w communico-',
             )} and ` +
             (`then ${chalk.cyan.bold('docker stop <name>')} and ${chalk.cyan.bold(
                 'docker rm <name>',

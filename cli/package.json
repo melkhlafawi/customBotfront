@@ -1,29 +1,28 @@
 {
-  "name": "botfront",
-  "version": "1.0.5",
-  "repository": "https://github.com/botfront/botfront",
-  "description": "Botfront is an open source chatbot platform based on Rasa.",
+  "name": "communico",
+  "version": "1.0.4",
+  "repository": "https://github.com/melkhlafawi/communico",
+  "description": "Communico is an open source chatbot platform based on Rasa.",
   "main": "index.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --ui bdd --reporter spec --colors --exit --require @babel/register",
-    "postinstall": "echo Botfront succesfully installed. Run 'botfront' to get started."
+    "postinstall": "echo Communico succesfully installed. Run 'communico' to get started."
   },
   "bin": {
-    "botfront": "bin/botfront"
+    "communico": "bin/communico"
   },
   "publishConfig": {
     "access": "public"
   },
   "keywords": [
-    "Botfront",
+    "Communico",
     "Rasa",
     "Chatbot",
     "Chatbot platform",
     "Botkit"
   ],
   "preferGlobal": true,
-  "author": "Botfront",
-  "license": "Apache-2.0",
+  "author": "Communico",
   "dependencies": {
     "arg": "^4.1.1",
     "axios": "^0.21.1",

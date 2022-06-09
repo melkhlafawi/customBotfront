@@ -46,19 +46,19 @@ function collect(value, previous) {
 
 program
     .version(version)
-    .description('Botfront CLI')
-    .action(() => console.log(`\n${chalk.red.bold('ERROR:')} Unsupported command. Run ${chalk.cyan.bold('botfront --help')} for more information.\n`));
+    .description('Communico CLI')
+    .action(() => console.log(`\n${chalk.red.bold('ERROR:')} Unsupported command. Run ${chalk.cyan.bold('communico --help')} for more information.\n`));
 
 program
     .command('init')
     .option('--path <path>', 'Desired project path')
-    .option('--cloud', 'Create a project with an actions server to be used with Botfront Cloud.')
-    .option('--img-botfront <image:tag>', 'Image for the botfront service')
-    .option('--img-botfront-api <image:tag>', 'Image used by the botfront-api service')
+    .option('--cloud', 'Create a project with an actions server to be used with Communico Cloud.')
+    .option('--img-communico <image:tag>', 'Image for the communico service')
+    .option('--img-communico-api <image:tag>', 'Image used by the communico-api service')
     .option('--img-rasa <image:tag>', 'Image used by the Rasa service')
     .option('--ci', 'No spinners, no prompt confirmations')
     .option('--enable-mongo-auth', 'Set up MongoDB with password authentication.')
-    .description('Create a new Botfront project.')
+    .description('Create a new Communico project.')
     .action(initCommand);
 
 program
@@ -66,25 +66,25 @@ program
     .option('-e, --exclude <service>', 'Do not run a given service', collect, [])
     .option('-v, --verbose', 'Display Docker Compose start-up logs')
     .option('--ci', 'No spinners, no prompt confirmations')
-    .description('Start a Botfront project.  Must be executed in your project\'s directory')
+    .description('Start a Communico project.  Must be executed in your project\'s directory')
     .action(dockerComposeUp);
 
 program
     .command('down')
     .option('-v, --verbose', 'Display Docker Compose start-up logs')
-    .description('Stops a Botfront project and releases Docker resources.  Must be executed in your project\'s directory')
+    .description('Stops a Communico project and releases Docker resources.  Must be executed in your project\'s directory')
     .action(dockerComposeDown);
 
 program
     .command('logs')
     .option('--ci', 'Print out logs once and do not hook to TTY')
-    .description('Display botfront logs. Must be executed in your project\'s directory')
+    .description('Display communico logs. Must be executed in your project\'s directory')
     .action(dockerComposeFollow);
 
 program
     .command('killall')
-    .option('--remove-images', 'Will also remove Botfront related Docker images')
-    .description('Stops any running Botfront project')
+    .option('--remove-images', 'Will also remove Communico related Docker images')
+    .description('Stops any running Communico project')
     .action(killAllCommand);
 
 program
@@ -99,17 +99,17 @@ program
 
 program
     .command('stop <service>')
-    .description('Stop a Botfront service (interactive). Must be executed in your project\'s directory')
+    .description('Stop a Communico service (interactive). Must be executed in your project\'s directory')
     .action(dockerComposeStop);
 
 program
     .command('start <service>')
-    .description('Start a Botfront service (interactive). Must be executed in your project\'s directory')
+    .description('Start a Communico service (interactive). Must be executed in your project\'s directory')
     .action(dockerComposeStart);
 
 program
     .command('restart <service>')
-    .description('Restart a Botfront service (interactive). Must be executed in your project\'s directory')
+    .description('Restart a Communico service (interactive). Must be executed in your project\'s directory')
     .action(dockerComposeRestart);
 
 program
@@ -124,7 +124,7 @@ program
 
 program
     .command('update')
-    .description('Update a project if the current Botfront version as a higher minor version but not a different major version')
+    .description('Update a project if the current Communico version as a higher minor version but not a different major version')
     .action(doMinorUpdate);
 
 async function openDocs() {
@@ -140,7 +140,7 @@ async function killAllCommand(cmd) {
     const { stop } = await inquirer.prompt({
         type: 'confirm',
         name: 'stop',
-        message: 'This will stop any running Botfront project and cleanup remaining Docker resources. This will not affect your project\'s data. Proceed ?',
+        message: 'This will stop any running Communico project and cleanup remaining Docker resources. This will not affect your project\'s data. Proceed ?',
         default: true,
     });
     if (stop){
@@ -172,25 +172,25 @@ async function general() {
         const { containers } = await getRunningDockerResources()
         if (isProjectDir()){
             if (containers && containers.length){
-                choices.push({ title: 'Stop Botfront', cmd: () => dockerComposeDown({ verbose: false }) });
+                choices.push({ title: 'Stop Communico', cmd: () => dockerComposeDown({ verbose: false }) });
                 choices.push({ title: 'Show logs', cmd: () => dockerComposeFollow({}) });
             } else {
                 choices.push({ title: 'Start project', cmd: () => dockerComposeUp({ verbose: false })});
             }
 
             if (isMinorUpdate()){
-                choices.push({ title: `Update project to Botfront ${getBotfrontVersion()}`, cmd: doMinorUpdate});
+                choices.push({ title: `Update project to Communico ${getBotfrontVersion()}`, cmd: doMinorUpdate});
             }
         } else {
             if (containers && containers.length){
-                choices.push({ title: 'Stop Botfront', cmd: () => killAllCommand({ verbose: false }) });
+                choices.push({ title: 'Stop Communico', cmd: () => killAllCommand({ verbose: false }) });
             }
             choices.push({ title: 'Create a new project', cmd: initCommand });
         }
         choices.push({ title: 'Browse the online documentation', cmd: openDocs});
-        choices.push({ title: 'More options (display the --help)', cmd: () => shell.exec('botfront -h') });
+        choices.push({ title: 'More options (display the --help)', cmd: () => shell.exec('communico -h') });
         choices.push({ title: 'Exit', cmd:  () => process.exit(0) });
-        console.log(boxen(`Welcome to ${chalk.green.bold('Botfront')}!\nversion: ${getBotfrontVersion()}`,  { padding: 1,  margin: 1 }));
+        console.log(boxen(`Welcome to ${chalk.green.bold('Communico')}!\nversion: ${getBotfrontVersion()}`,  { padding: 1,  margin: 1 }));
         displayProjectUpdateMessage(); console.log('\n')
         const { action } = await inquirer.prompt({
             type: 'list',
@@ -205,7 +205,7 @@ async function general() {
 }
 
 async function cleanupDocker({rm, rmi}, spinner = ora()) {
-    const composePath = path.resolve(__dirname, '..', 'project-template', '.botfront', 'docker-compose-template.yml');
+    const composePath = path.resolve(__dirname, '..', 'project-template', '.communico', 'docker-compose-template.yml');
     const { services } = yaml.safeLoad(fs.readFileSync(composePath), 'utf-8');
     const containersAndImageNames = getContainerAndImageNames(null, services);
     if (rm) runDockerPromises('rm', containersAndImageNames, spinner);
