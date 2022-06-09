@@ -16,8 +16,8 @@ function set_version_package_files {
 	rm "$1.tmp"
 }
 
-function set_version_in_botfront_yaml {
-	search='(\/botfront:v).+'
+function set_version_in_communico_yaml {
+	search='(\/communico:v).+'
 	replace="\1${2}"
 	sed -i ".tmp" -E "s/${search}/${replace}/g" "$1"
 	rm "$1.tmp"
@@ -29,9 +29,9 @@ echo "Version $PACKAGE_VERSION set in cli/package.json"
 # npm install will sync the version in the cli/package-lock.json
 npm --prefix ../cli/ install --ignore-scripts
 
-# Set Botfront image version in the project template
-set_version_in_botfront_yaml '../cli/project-template/.botfront/botfront.yml' $PACKAGE_VERSION
-echo "Version $PACKAGE_VERSION set in botfront.yml"
+# Set Communico image version in the project template
+set_version_in_communico_yaml '../cli/project-template/.communico/communico.yml' $PACKAGE_VERSION
+echo "Version $PACKAGE_VERSION set in communico.yml"
 
 # Copy the changelog at the root level
 cp ../botfront/CHANGELOG.md ../
@@ -43,7 +43,7 @@ echo "Copy of README in the CLI project"
 # Amend release commit with new and changed files
 git add ../CHANGELOG.md
 git add ../cli/README.md
-git add ../cli/project-template/.botfront/botfront.yml
+git add ../cli/project-template/.communico/communico.yml
 git add ../cli/package.json
 git add ../cli/package-lock.json
 
