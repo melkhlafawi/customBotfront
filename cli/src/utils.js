@@ -338,12 +338,12 @@ export async function verifySystem() {
 
 export function getBotfrontVersion() {
     return JSON.parse(
-        fs.readFileSync(path.join(__dirname, '../../botfront/package.json')),
+        fs.readFileSync(path.join(__dirname, '../../communico/package.json')),
     ).version;
 }
 
 export function isPrivate() {
-    return JSON.parse(fs.readFileSync(path.join(__dirname, '../../botfront/package.json'))).private;
+    return JSON.parse(fs.readFileSync(path.join(__dirname, '../../communico/package.json'))).private;
 }
 
 export function getComposeFilePath(dir, fileName = DOCKER_COMPOSE_FILENAME) {
