@@ -26,7 +26,7 @@ import {
     wait,
     isProjectDir,
     verifySystem,
-    getBotfrontVersion,
+    getCommunicoVersion,
     failSpinner,
     stopSpinner,
     getContainerAndImageNames,
@@ -38,7 +38,7 @@ import {
 } from './utils';
 
 const program = require('commander');
-const version = getBotfrontVersion();
+const version = getCommunicoVersion();
 
 function collect(value, previous) {
     return previous.concat([value]);
@@ -129,9 +129,9 @@ program
 
 async function openDocs() {
     const spinner = ora()
-    spinner.start(`Opening ${chalk.green.bold('https://botfront.io/docs')} in your browser...`)
+    spinner.start(`Opening ${chalk.green.bold('https://communico.io/docs')} in your browser...`)
     await wait(2000);
-    await open('https://botfront.io/docs')
+    await open('https://communico.io/docs')
     spinner.succeed('Done')
     console.log('\n');
 }
@@ -179,7 +179,7 @@ async function general() {
             }
 
             if (isMinorUpdate()){
-                choices.push({ title: `Update project to Communico ${getBotfrontVersion()}`, cmd: doMinorUpdate});
+                choices.push({ title: `Update project to Communico ${getCommunicoVersion()}`, cmd: doMinorUpdate});
             }
         } else {
             if (containers && containers.length){
@@ -190,7 +190,7 @@ async function general() {
         choices.push({ title: 'Browse the online documentation', cmd: openDocs});
         choices.push({ title: 'More options (display the --help)', cmd: () => shell.exec('communico -h') });
         choices.push({ title: 'Exit', cmd:  () => process.exit(0) });
-        console.log(boxen(`Welcome to ${chalk.green.bold('Communico')}!\nversion: ${getBotfrontVersion()}`,  { padding: 1,  margin: 1 }));
+        console.log(boxen(`Welcome to ${chalk.green.bold('Communico')}!\nversion: ${getCommunicoVersion()}`,  { padding: 1,  margin: 1 }));
         displayProjectUpdateMessage(); console.log('\n')
         const { action } = await inquirer.prompt({
             type: 'list',

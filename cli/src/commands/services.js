@@ -34,7 +34,7 @@ import {
     getDefaultServiceNames,
     isMajorUpdateWithVersion,
     isMinorUpdateWithVersion,
-    getBotfrontVersion,
+    getCommunicoVersion,
     getProjectVersion,
     displayProjectUpdateMessage,
     getMongoPassword,
@@ -63,24 +63,24 @@ async function removeDynamicallyBuiltImages() {
 }
 
 export async function doMinorUpdate() {
-    const botfrontVersion = getBotfrontVersion();
+    const communicoVersion = getCommunicoVersion();
     const projectVersion = getProjectVersion();
     const mongoPassword = getMongoPassword();
-    if (isMajorUpdateWithVersion(projectVersion, botfrontVersion)) {
+    if (isMajorUpdateWithVersion(projectVersion, communicoVersion)) {
         return console.log(
             boxen(
                 `Project was made with Communico ${chalk.blueBright(
                     projectVersion,
                 )} and the currently installed version is ${chalk.green(
-                    botfrontVersion,
+                    communicoVersion,
                 )}, which is a major update.\nPlease follow the instructions in the migration guide: ${chalk.cyan.bold(
-                    'https://botfront.io/docs/installation/migration-guide/',
+                    'https://communico.io/docs/installation/migration-guide/',
                 )}.`,
             ),
         );
     }
 
-    if (isMinorUpdateWithVersion(projectVersion, botfrontVersion)) {
+    if (isMinorUpdateWithVersion(projectVersion, communicoVersion)) {
         await copyTemplateFilesToProjectDir(fixDir(), {}, true, true, mongoPassword);
         removeDynamicallyBuiltImages();
         return console.log(boxen('Your project was updated successfully 👌.'));
@@ -137,7 +137,7 @@ export async function dockerComposeUp(
                 )} to watch ${chalk.yellow.bold('actions')} and ${chalk.yellow.bold(
                     'rasa',
                 )} folders (see ` +
-                `${chalk.cyan.bold('https://botfront.io/docs/rasa/custom-actions')})\n` +
+                `${chalk.cyan.bold('https://communico.io/docs/rasa/custom-actions')})\n` +
                 `\u2022 Run ${chalk.cyan.bold('communico down')} to stop Communico\n` +
                 `\u2022 Run ${chalk.cyan.bold(
                     'communico --help',
@@ -322,9 +322,9 @@ export async function getRunningDockerResources() {
     const containers = containersCommand.raw.match(/(communico-\w+)/g);
     const networkCommand = await docker.command('network ls --format={{.Name}}');
 
-    const networks = networkCommand.raw.match(/([^\s]+_botfront-network)/g);
+    const networks = networkCommand.raw.match(/([^\s]+_communico-network)/g);
     const volumeCommand = await docker.command('volume ls --format={{.Name}}');
-    const volumes = volumeCommand.raw.match(/([^\s]+_botfront-db)/g);
+    const volumes = volumeCommand.raw.match(/([^\s]+_communico-db)/g);
     return { containers, networks, volumes };
 }
 

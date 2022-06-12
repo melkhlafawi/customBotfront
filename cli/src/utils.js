@@ -83,9 +83,9 @@ export async function getLatestVersion() {
             return response.data['dist-tags'].latest;
         }
         // If the call fails we just return the current version
-        return getBotfrontVersion();
+        return getCommunicoVersion();
     } catch (e) {
-        return getBotfrontVersion();
+        return getCommunicoVersion();
     }
 }
 
@@ -97,33 +97,33 @@ export function getMongoPassword() {
     return getProjectConfig(fixDir(null)).env.mongo_initdb_root_password;
 }
 
-export function isMinorUpdateWithVersion(projectVersion, botfrontVersion) {
+export function isMinorUpdateWithVersion(projectVersion, communicoVersion) {
     const projectMajorVersion = projectVersion.split('.')[1];
     const projectMinorVersion = projectVersion.split('.')[2];
-    const botfrontMajorVersion = botfrontVersion.split('.')[1];
-    const botfrontMinorVersion = botfrontVersion.split('.')[2];
+    const communicoMajorVersion = communicoVersion.split('.')[1];
+    const communicoMinorVersion = communicoVersion.split('.')[2];
     return (
-        projectMajorVersion === botfrontMajorVersion &&
-        botfrontMinorVersion !== projectMinorVersion
+        projectMajorVersion === communicoMajorVersion &&
+        communicoMinorVersion !== projectMinorVersion
     );
 }
 
-export function isMajorUpdateWithVersion(projectVersion, botfrontVersion) {
+export function isMajorUpdateWithVersion(projectVersion, communicoVersion) {
     const projectMajorVersion = projectVersion.split('.')[1];
-    const botfrontMajorVersion = botfrontVersion.split('.')[1];
-    return compareVersions(botfrontMajorVersion, projectMajorVersion) == 1;
+    const communicoMajorVersion = communicoVersion.split('.')[1];
+    return compareVersions(communicoMajorVersion, projectMajorVersion) == 1;
 }
 
 export function isMinorUpdate() {
-    const botfrontVersion = getBotfrontVersion();
+    const communicoVersion = getCommunicoVersion();
     const projectVersion = getProjectVersion();
-    return isMinorUpdateWithVersion(projectVersion, botfrontVersion);
+    return isMinorUpdateWithVersion(projectVersion, communicoVersion);
 }
 
 export function isMajorUpdate() {
-    const botfrontVersion = getBotfrontVersion();
+    const communicoVersion = getCommunicoVersion();
     const projectVersion = getProjectVersion();
-    return isMajorUpdateWithVersion(projectVersion, botfrontVersion);
+    return isMajorUpdateWithVersion(projectVersion, communicoVersion);
 }
 
 export function shouldUpdateNpmPackageWithVersions(currentVersion, latestVersion) {
@@ -132,7 +132,7 @@ export function shouldUpdateNpmPackageWithVersions(currentVersion, latestVersion
 
 export async function shouldUpdateNpmPackage() {
     if (isPrivate()) return false;
-    const currentVersion = getBotfrontVersion();
+    const currentVersion = getCommunicoVersion();
     const latestVersion = await getLatestVersion();
     return shouldUpdateNpmPackageWithVersions(currentVersion, latestVersion);
 }
@@ -140,7 +140,7 @@ export async function shouldUpdateNpmPackage() {
 export async function displayNpmUpdateMessage() {
     const shouldUpdate = await shouldUpdateNpmPackage();
     if (shouldUpdate) {
-        const currentVersion = getBotfrontVersion();
+        const currentVersion = getCommunicoVersion();
         const latestVersion = await getLatestVersion();
         console.log(
             boxen(
@@ -160,29 +160,29 @@ export async function displayProjectUpdateMessage() {
     if (!isProjectDir()) return;
     let isMajorUpdate = false;
 
-    const botfrontVersion = getBotfrontVersion();
+    const communicoVersion = getCommunicoVersion();
     const projectVersion = getProjectVersion();
 
-    if (isMinorUpdateWithVersion(projectVersion, botfrontVersion)) {
+    if (isMinorUpdateWithVersion(projectVersion, communicoVersion)) {
         console.log(
             boxen(
                 `Project was made with Communico ${chalk.blueBright(
                     projectVersion,
                 )} and the currently installed version is ${chalk.green(
-                    botfrontVersion,
+                    communicoVersion,
                 )}\nRun ${chalk.cyan.bold('communico update')} to update your project.`,
             ),
         );
     }
-    if (isMajorUpdateWithVersion(projectVersion, botfrontVersion)) {
+    if (isMajorUpdateWithVersion(projectVersion, communicoVersion)) {
         console.log(
             boxen(
                 `Project was made with Communico ${chalk.blueBright(
                     projectVersion,
                 )} and the currently installed version is ${chalk.green(
-                    botfrontVersion,
+                    communicoVersion,
                 )}, which is a major update.\nPlease follow the instructions in the migration guide: ${chalk.cyan.bold(
-                    'https://botfront.io/docs/installation/migration-guide/',
+                    'https://communico.io/docs/installation/migration-guide/',
                 )}.`,
             ),
         );
@@ -204,7 +204,7 @@ export function updateProjectFile({
 }) {
     const config = getProjectConfig(projectAbsPath);
     if (!config.version) {
-        config.version = getBotfrontVersion();
+        config.version = getCommunicoVersion();
     }
 
     if (images) {
@@ -336,7 +336,7 @@ export async function verifySystem() {
     }
 }
 
-export function getBotfrontVersion() {
+export function getCommunicoVersion() {
     return JSON.parse(
         fs.readFileSync(path.join(__dirname, '../../communico/package.json')),
     ).version;

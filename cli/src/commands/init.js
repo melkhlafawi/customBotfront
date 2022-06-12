@@ -24,15 +24,15 @@ const access = promisify(fs.access);
 const copy = promisify(ncp);
 
 export async function initCommand(
-    { path, imgBotfront, imgBotfrontApi, imgRasa, ci, enableMongoAuth, cloud } = {},
+    { path, imgCommunico, imgCommunicoApi, imgRasa, ci, enableMongoAuth, cloud } = {},
 ) {
 
     await displayNpmUpdateMessage();
     try {
         await verifySystem();
         let images = {};
-        if (imgBotfront) images = {...images, communico: imgBotfront};
-        if (imgBotfrontApi) images = {...images, 'communico-api': imgBotfrontApi};
+        if (imgCommunico) images = {...images, communico: imgCommunico};
+        if (imgCommunicoApi) images = {...images, 'communico-api': imgCommunicoApi};
         if (imgRasa) images = {...images, rasa: imgRasa};
 
         const currentDirEmpty = fs.readdirSync(process.cwd()).length === 0;
@@ -83,7 +83,7 @@ export async function copyTemplateFilesToProjectDir(targetAbsolutePath, images, 
 
 export async function pullDockerImages(images,
     spinner,
-    message = `Downloading Docker images... This may take a while, why don\'t you grab a ☕ and read the ${chalk.cyan('http://botfront.io/docs')} 😉?`,
+    message = `Downloading Docker images... This may take a while, why don\'t you grab a ☕ and read the ${chalk.cyan('http://communico.io/docs')} 😉?`,
 ) {
     const docker = new Docker({});
     startSpinner(spinner, 'Checking Docker images')

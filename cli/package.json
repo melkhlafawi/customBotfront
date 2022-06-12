@@ -1,6 +1,6 @@
 {
   "name": "communico",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "repository": "https://github.com/melkhlafawi/communico",
   "description": "Communico is an open source chatbot platform based on Rasa.",
   "main": "index.js",
