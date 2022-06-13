@@ -80,7 +80,7 @@ if (Meteor.isServer) {
             
             const settings = {
                 public: {
-                    backgroundImages: publicSettings.backgroundImages || [],
+                    backgroundImages: ['LoginBG.png'],
                     defaultNLUConfig: safeDump({ pipeline: publicSettings.pipeline }),
                 },
                 private: {
