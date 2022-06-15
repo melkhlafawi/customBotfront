@@ -219,6 +219,25 @@ export async function setProject(bf_project_id) {
     spinner.succeed(`Successfully switched to project '${bf_project_id}'.`);
 }
 
+export async function setExpiration(expirationUnixTime) {
+    if (!expirationUnixTime || typeof expirationUnixTime !== 'string') {
+        throw new Error(`Project Expiration Unix Time: '${expirationUnixTime}' -> is not valid.`);
+    }
+    const { services } = getComposeTemplateFile();
+    const { services: actualServices } = getGeneratedComposeFile();
+    const exclude = Object.keys(services).filter((k) => !(k in actualServices));
+    updateProjectFile({ leaveMongoUrl: true, env: { expirationUnixTime } });
+    // generate compose file without touching .env file
+    generateDockerCompose(exclude, undefined, false, expirationUnixTime);
+
+    const spinner = ora(
+        `Restarting Rasa and action server to set project expiration date '${expirationUnixTime}'...`,
+    );
+    spinner.start();
+    await shellAsync('docker-compose up -d', { silent: true });
+    spinner.succeed(`Successfully added an expiration date: '${expirationUnixTime}'.`);
+}
+
 export async function dockerComposeStart(service, { verbose }, workingDir) {
     await dockerComposeCommand(
         service,

@@ -3,12 +3,12 @@ import ora from 'ora';
 import yaml from 'js-yaml';
 import fs from 'fs-extra';
 import path from 'path';
-import { Docker } from 'docker-cli-js';
+import {Docker} from 'docker-cli-js';
 import boxen from 'boxen';
 import inquirer from 'inquirer';
 import shell from 'shelljs';
 import chalk from 'chalk';
-import { initCommand } from './commands/init';
+import {initCommand} from './commands/init';
 import {
     dockerComposeUp,
     dockerComposeDown,
@@ -20,7 +20,7 @@ import {
     stopRunningProjects,
     getRunningDockerResources,
     watchFolder,
-    doMinorUpdate,
+    doMinorUpdate, setExpiration,
 } from './commands/services';
 import {
     wait,
@@ -93,6 +93,11 @@ program
     .action(setProject);
 
 program
+    .command('set-expiration <expirationUnixTime>')
+    .description('Set a new expiration date for the Communico project')
+    .action(setExpiration);
+
+program
     .command('switch <project_id>')
     .description('Set Rasa and Actions service to serve project with a given project ID')
     .action(setProject);
@@ -137,13 +142,13 @@ async function openDocs() {
 }
 
 async function killAllCommand(cmd) {
-    const { stop } = await inquirer.prompt({
+    const {stop} = await inquirer.prompt({
         type: 'confirm',
         name: 'stop',
         message: 'This will stop any running Communico project and cleanup remaining Docker resources. This will not affect your project\'s data. Proceed ?',
         default: true,
     });
-    if (stop){
+    if (stop) {
         const spinner = ora();
         try {
             await stopRunningProjects(
@@ -169,30 +174,34 @@ async function general() {
     try {
         await verifySystem()
         await displayNpmUpdateMessage();
-        const { containers } = await getRunningDockerResources()
-        if (isProjectDir()){
-            if (containers && containers.length){
-                choices.push({ title: 'Stop Communico', cmd: () => dockerComposeDown({ verbose: false }) });
-                choices.push({ title: 'Show logs', cmd: () => dockerComposeFollow({}) });
+        const {containers} = await getRunningDockerResources()
+        if (isProjectDir()) {
+            if (containers && containers.length) {
+                choices.push({title: 'Stop Communico', cmd: () => dockerComposeDown({verbose: false})});
+                choices.push({title: 'Show logs', cmd: () => dockerComposeFollow({})});
             } else {
-                choices.push({ title: 'Start project', cmd: () => dockerComposeUp({ verbose: false })});
+                choices.push({title: 'Start project', cmd: () => dockerComposeUp({verbose: false})});
             }
 
-            if (isMinorUpdate()){
-                choices.push({ title: `Update project to Communico ${getCommunicoVersion()}`, cmd: doMinorUpdate});
+            if (isMinorUpdate()) {
+                choices.push({title: `Update project to Communico ${getCommunicoVersion()}`, cmd: doMinorUpdate});
             }
         } else {
-            if (containers && containers.length){
-                choices.push({ title: 'Stop Communico', cmd: () => killAllCommand({ verbose: false }) });
+            if (containers && containers.length) {
+                choices.push({title: 'Stop Communico', cmd: () => killAllCommand({verbose: false})});
             }
-            choices.push({ title: 'Create a new project', cmd: initCommand });
+            choices.push({title: 'Create a new project', cmd: initCommand});
         }
-        choices.push({ title: 'Browse the online documentation', cmd: openDocs});
-        choices.push({ title: 'More options (display the --help)', cmd: () => shell.exec('communico -h') });
-        choices.push({ title: 'Exit', cmd:  () => process.exit(0) });
-        console.log(boxen(`Welcome to ${chalk.green.bold('Communico')}!\nversion: ${getCommunicoVersion()}`,  { padding: 1,  margin: 1 }));
-        displayProjectUpdateMessage(); console.log('\n')
-        const { action } = await inquirer.prompt({
+        choices.push({title: 'Browse the online documentation', cmd: openDocs});
+        choices.push({title: 'More options (display the --help)', cmd: () => shell.exec('communico -h')});
+        choices.push({title: 'Exit', cmd: () => process.exit(0)});
+        console.log(boxen(`Welcome to ${chalk.green.bold('Communico')}!\nversion: ${getCommunicoVersion()}`, {
+            padding: 1,
+            margin: 1
+        }));
+        displayProjectUpdateMessage();
+        console.log('\n')
+        const {action} = await inquirer.prompt({
             type: 'list',
             name: 'action',
             message: 'What do you want to do?',
@@ -206,17 +215,18 @@ async function general() {
 
 async function cleanupDocker({rm, rmi}, spinner = ora()) {
     const composePath = path.resolve(__dirname, '..', 'project-template', '.communico', 'docker-compose-template.yml');
-    const { services } = yaml.safeLoad(fs.readFileSync(composePath), 'utf-8');
+    const {services} = yaml.safeLoad(fs.readFileSync(composePath), 'utf-8');
     const containersAndImageNames = getContainerAndImageNames(null, services);
     if (rm) runDockerPromises('rm', containersAndImageNames, spinner);
     if (rmi) runDockerPromises('rmi', containersAndImageNames, spinner);
 }
 
-async function runDockerPromises(cmd, { containers, images }, spinner) {
+async function runDockerPromises(cmd, {containers, images}, spinner) {
     const docker = new Docker({});
     const name = cmd === 'rm' ? 'containers' : 'images';
     const array = cmd === 'rm' ? containers : images;
-    const promises = array.map(i => docker.command(`${cmd} ${i}`).catch(()=>{}));
+    const promises = array.map(i => docker.command(`${cmd} ${i}`).catch(() => {
+    }));
     try {
         await Promise.all(promises);
         return succeedSpinner(spinner, `Docker ${name} removed.`);

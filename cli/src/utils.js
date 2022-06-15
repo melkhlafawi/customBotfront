@@ -268,7 +268,7 @@ export async function updateEnvFile(projectAbsPath) {
 
 export const getComposeTemplateFile = dir => getComposeFile(dir, DOCKER_COMPOSE_TEMPLATE_FILENAME);
 
-export function generateDockerCompose(exclude = [], dir, projectId) {
+export function generateDockerCompose(exclude = [], dir, projectId, expirationUnixTime) {
     let initContent =
         '######################################################################################################\n';
     initContent +=
@@ -304,6 +304,15 @@ export function generateDockerCompose(exclude = [], dir, projectId) {
             dcCopy.services[service].environment = [
                 ...(dcCopy.services[service].environment || []),
                 `BF_PROJECT_ID=${projectId}`,
+            ];
+        })
+    }
+    if (expirationUnixTime) { // hot update of expirationUnixTime
+        ['actions', 'rasa'].forEach(service => {
+            if (!(service in dc.services)) return;
+            dcCopy.services[service].environment = [
+                ...(dcCopy.services[service].environment || []),
+                `BF_EXPIRATION_DATE=${projectId}`,
             ];
         })
     }
