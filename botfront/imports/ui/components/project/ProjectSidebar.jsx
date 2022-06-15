@@ -62,7 +62,7 @@ class ProjectSidebar extends React.Component {
                             <Menu.Item name='Settings' icon='setting' data-cy='settings-sidebar-link'/>
                         </Link>
                     )}
-                    <a href={"https://10.6.3.26:443/managements/list?token=" + getNewJwtToken(Meteor.userId(), Meteor.user().emails[0].address)
+                    <a href={"https://ruh-robot-01.swcc.gov.sa:443/managements/list?token=" + getNewJwtToken(Meteor.userId(), Meteor.user().emails[0].address)
                         // + "&token=" + Accounts._storedLoginToken()}
                     }
                        target='_blank' rel='noopener noreferrer'>
